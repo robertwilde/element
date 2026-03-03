@@ -671,7 +671,7 @@ export class SiFilteredSearchComponent implements OnInit, OnChanges {
 
   protected freeTextFocus(): void {
     // Ensure that the free text input is fully visible in the scroll container
-    const scrollDirection = isRTL() ? -1 : 1;
+        const scrollDirection = isRTL() ? -1 : 1;
     const position = scrollDirection * this.scrollContainer().nativeElement.scrollWidth;
     this.scrollContainer().nativeElement.scrollLeft = position;
     this.typeaheadInputChange.next(this.freeTextInputElement().nativeElement.value);
@@ -726,7 +726,12 @@ export class SiFilteredSearchComponent implements OnInit, OnChanges {
     }
   }
 
+  protected criterionBlur(): void {
+    this.trimWhitespaces();
+  }
+
   protected freeTextBlur(): void {
+    this.trimWhitespaces();
     queueMicrotask(() => {
       if (this.freeTextCriterion() && this.searchValue.length > 0) {
         this.createFreeTextPill(this.searchValue);
@@ -783,5 +788,15 @@ export class SiFilteredSearchComponent implements OnInit, OnChanges {
     this.searchValue = '';
     this.allowedCriteriaCache = undefined;
     this.emitChangeEvent();
+  }
+
+  protected trimWhitespaces(): void {
+    this.searchCriteria().value = this.searchCriteria().value.trim();
+    this.searchCriteria().criteria.forEach(c => {
+      if (typeof c.value === 'string') {
+        c.value = c.value.trim();
+      }
+    });
+    this.searchValue = this.searchValue.trim();
   }
 }
